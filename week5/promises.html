@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Callbacks and Promises Tutorial</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // 1. Callbacks
+        $("#callback").on("click", function () {
+          function greeting(name, callback) {
+            callback("Hello, " + name);
+          }
+          function showMessage(message) {
+            document.getElementById("callbackOutput").textContent = message;
+          }
+          greeting("Student", showMessage);
+        });
+
+        // 2. Timeout
+        $("#timeout").on("click", function () {
+          setTimeout(() => {
+            document.getElementById("timeoutOutput").textContent =
+              "This message appears after 3 seconds!";
+          }, 3000);
+        });
+
+        // Interval
+        $("#interval").on("click", function () {
+          let count = 0;
+          setInterval(() => {
+            count++;
+            document.getElementById("intervalOutput").textContent =
+              "Interval Count: " + count;
+          }, 2000);
+        });
+
+        // 3. Recursion
+        $("#recursion").on("click", function () {
+          function countdown(n) {
+            if (n < 0) return;
+            document.getElementById("recursionOutput").textContent =
+              "Countdown: " + n;
+            setTimeout(() => countdown(n - 1), 1000);
+          }
+          countdown(5);
+        });
+
+        // 5. Promises
+        $("#promise").on("click", function () {
+          function asyncTask() {
+            return new Promise((resolve, reject) => {
+              setTimeout(() => resolve("Promise Resolved!"), 3000);
+            });
+          }
+          asyncTask().then((result) => {
+            document.getElementById("promiseOutput").textContent = result;
+          });
+        });
+
+        // 6. Fetch API
+        $("#fetch").on("click", function () {
+          function fetchData() {
+            fetch("https://jsonplaceholder.typicode.com/posts/1")
+              .then((response) => response.json())
+              .then((data) => {
+                document.getElementById("fetchOutput").textContent =
+                  JSON.stringify(data);
+              })
+              .catch((error) => console.error("Fetch error:", error));
+          }
+          fetchData();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Callbacks and Promises Tutorial</h2>
+
+    <h3>Callbacks</h3>
+    <button id="callback">Execute</button>
+    <p id="callbackOutput"></p>
+
+    <h3>Timeout</h3>
+    <button id="timeout">Execute</button>
+    <p id="timeoutOutput"></p>
+
+    <h3>Interval</h3>
+    <button id="interval">Execute</button>
+    <p id="intervalOutput"></p>
+
+    <h3>Recursion</h3>
+    <button id="recursion">Execute</button>
+    <p id="recursionOutput"></p>
+
+    <h3>Promises</h3>
+    <button id="promise">Execute</button>
+    <p id="promiseOutput"></p>
+
+    <h3>Fetch API</h3>
+    <button id="fetch">Execute</button>
+    <p id="fetchOutput"></p>
+  </body>
+</html>

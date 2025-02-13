@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery Tutorial</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // 1. jQuery Selector
+        $("#changeText").click(function () {
+          $(".text").text("Text Changed!");
+        });
+
+        // 2. Show/Hide Div
+        $("#toggleDiv").click(function () {
+          $("#box").toggle();
+        });
+
+        // 3. Change Color
+        $("#changeColor").click(function () {
+          $("#colorBox").css("background", "red");
+        });
+
+        // 4. Complex Selectors
+        $("#applySelectors").click(function () {
+          $(".box:first").css("background", "green");
+          $(".box:last").css("background", "blue");
+          $(".box:even").css("border", "2px solid black");
+          $(".box:odd").css("border", "2px dashed black");
+          $(".box:gt(3)").css("opacity", "0.5");
+        });
+
+        // 5.1 Insert into DOM Tree
+        $("#insert").click(function () {
+          $("#parent").append("<p>Appended Child</p>");
+          $("#parent").prepend("<p>Prepended Child</p>");
+          $("#parent").before("<h4>Before Parent</h4>");
+          $("#parent").after("<h4>After Parent</h4>");
+        });
+
+        // 5.2 Remove from DOM Tree
+        $("#remove").click(function () {
+          $("p:first").remove();
+        });
+
+        // 5.3 Replace in DOM Tree
+        $("#replace").click(function () {
+          $("#parent p:first").replaceWith("<p>Replaced Element</p>");
+        });
+
+        // 5.4 Manipulate DOM Attributes
+        $("#manipulate").click(function () {
+          $("#colorBox").attr("data-value", "100");
+          alert("Attribute data-value: " + $("#colorBox").attr("data-value"));
+          $("#colorBox").removeAttr("data-value");
+        });
+
+        // 6.1 Event Handling
+        $("#eventBtn").on("click", function () {
+          alert("Button Clicked!");
+        });
+        $("#triggerEvent").click(function () {
+          $("#eventBtn").trigger("click");
+        });
+
+        // 6.2 Event Propagation
+        $("#parent").on("click", "p", function (event) {
+          alert("Paragraph Clicked!");
+          event.stopPropagation();
+        });
+
+        // 6.3 Browser & Document Events
+        $(window).resize(function () {
+          console.log("Window resized!");
+        });
+
+        $(window).scroll(function () {
+          console.log("Page Scrolled!");
+        });
+
+        // 6.4 Mouse & Keyboard Events
+        $("#mouseBtn").click(function () {
+          alert("Button Clicked!");
+        });
+        $("#mouseBtn").mouseenter(function () {
+          $(this).css("background", "lightgreen");
+        });
+        $("#mouseBtn").mouseleave(function () {
+          $(this).css("background", "");
+        });
+        $("#keyInput").keydown(function (e) {
+          console.log("Key Down");
+        });
+        $("#keyInput").keyup(function (e) {
+          console.log("Key Up");
+        });
+        $("#keyInput").keypress(function (e) {
+          console.log("Key Pressed");
+        });
+
+        // 6.5 Print jQuery Event Details
+        $("#eventDetails").click(function (event) {
+          $("#eventOutput").html(
+            `Target: ${event.target.tagName} <br> Timestamp: ${event.timeStamp}`
+          );
+          event.stopPropagation();
+        });
+
+        // 6.6 Forms & Events
+        $("#name").focus(function () {
+          $(this).css("background", "lightyellow");
+        });
+        $("#name").blur(function () {
+          $(this).css("background", "");
+        });
+        $("#sampleForm").submit(function (event) {
+          event.preventDefault();
+          alert("Form Submitted!");
+        });
+
+        // 7.1 Ajax Syntax
+        $("#loadData").click(function () {
+          $.ajax({
+            url: "https://jsonplaceholder.typicode.com/posts/1",
+            method: "GET",
+          })
+            .done(function (data) {
+              $("#ajaxResult").text(JSON.stringify(data));
+            })
+            .fail(function () {
+              alert("Error fetching data");
+            });
+        });
+
+        // 7.2 Ajax Shortcuts
+        $("#getData").click(function () {
+          $.get(
+            "https://jsonplaceholder.typicode.com/posts/1",
+            function (data) {
+              console.log(data);
+            }
+          );
+        });
+        $("#postData").click(function () {
+          $.post(
+            "https://jsonplaceholder.typicode.com/posts",
+            { title: "Test" },
+            function (data) {
+              console.log(data);
+            }
+          );
+        });
+
+        // 8. Effects
+        $("#fadeBtn").click(function () {
+          $("#effectBox").fadeToggle();
+        });
+        $("#slideBtn").click(function () {
+          $("#effectBox").slideToggle();
+        });
+      });
+    </script>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        display: inline-block;
+        background: lightblue;
+      }
+      .highlight {
+        background: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>jQuery Tutorial</h2>
+
+    <!-- jQuery Selector -->
+    <h3>jQuery Selector</h3>
+    <p class="text">This is a paragraph.</p>
+    <span class="text">This is a paragraph.</span>
+    <button id="changeText">Change Text</button>
+
+    <!-- Show Hide Div -->
+    <h3>Show/Hide Div</h3>
+    <button id="toggleDiv">Toggle Box</button>
+    <div id="box" class="box"></div>
+
+    <!-- Change Color -->
+    <h3>Change Color of a Div</h3>
+    <button id="changeColor">Change Color</button>
+    <div id="colorBox" class="box"></div>
+
+    <!-- Complex Selectors -->
+    <h3>Complex Selectors</h3>
+    <div class="box">First</div>
+    <div class="box">Second</div>
+    <div class="box">Third</div>
+    <div class="box">Fourth</div>
+    <button id="applySelectors">Apply Selectors</button>
+
+    <!-- DOM Manipulation -->
+    <h3>DOM Tree Manipulation</h3>
+    <div id="parent">
+      <p>Child 1</p>
+      <p>Child 2</p>
+    </div>
+    <button id="insert">Insert Elements</button>
+    <button id="remove">Remove Elements</button>
+    <button id="replace">Replace Element</button>
+    <button id="manipulate">Manipulate Attributes</button>
+
+    <!-- Event Handling -->
+    <h3>Event Handling</h3>
+    <button id="eventBtn">Click Me</button>
+    <button id="triggerEvent">Trigger Event</button>
+
+    <!-- 6.4 Mouse & Keyboard Events -->
+    <h3>Mouse & Keyboard Events</h3>
+    <input type="text" id="keyInput" placeholder="Type here" />
+    <button id="mouseBtn">Mouse Events</button>
+
+    <!-- 6.5 Print jQuery Event Details -->
+    <h3>Print jQuery Event Details</h3>
+    <button id="eventDetails">Click to see event details</button>
+    <div id="eventOutput"></div>
+
+    <!-- 6.6 Forms & Events -->
+    <h3>Forms & Events</h3>
+    <form id="sampleForm">
+      <input type="text" id="name" placeholder="Name" />
+      <input type="text" id="email" placeholder="Email" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <!-- 7.1 Ajax Syntax -->
+    <h3>Ajax Syntax</h3>
+    <button id="loadData">Load Data</button>
+    <div id="ajaxResult"></div>
+
+    <!-- 7.2 Ajax Shortcuts -->
+    <h3>Ajax Shortcuts</h3>
+    <button id="getData">GET Request</button>
+    <button id="postData">POST Request</button>
+
+    <!-- 8. Effects -->
+    <h3>Effects</h3>
+    <button id="fadeBtn">Fade Effect</button>
+    <button id="slideBtn">Slide Effect</button>
+    <div id="effectBox" class="box"></div>
+
+    <!-- 9. Strengths & Weaknesses of jQuery -->
+    <h3>Strengths & Weaknesses of jQuery</h3>
+    <p>
+      <strong>Strengths:</strong> Easy DOM manipulation, cross-browser
+      compatibility, extensive plugins.
+    </p>
+    <p>
+      <strong>Weaknesses:</strong> Large library size, dependency on JavaScript,
+      slower than native JavaScript in some cases.
+    </p>
+  </body>
+</html>

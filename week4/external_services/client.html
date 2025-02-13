@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fetch Example</title>
+  </head>
+  <body>
+    <h1>Talk to the Cat</h1>
+    <div style="display: flex; flex-direction: row; gap: 5px">
+      <img
+        src="https://plus.unsplash.com/premium_photo-1667030474693-6d0632f97029?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2F0fGVufDB8fDB8fHww"
+        width="100px"
+        alt="Cat"
+      />
+      <div style="display: flex; flex-direction: column; align-items: end">
+        <textarea id="input" rows="7" cols="50"> </textarea>
+        <br />
+        <button id="loadButton" style="width: 50px">Help</button>
+      </div>
+    </div>
+    <br />
+    <div id="content" style="white-space: pre"></div>
+    <script>
+      const loadButton = document.getElementById("loadButton");
+      const contentDiv = document.getElementById("content");
+      loadButton.addEventListener("click", () => {
+        contentDiv.textContent = "Thinking...";
+        let data = document.getElementById("input").value;
+
+        const data2 = JSON.stringify({
+          text: `${data}`,
+        });
+        fetch("http://localhost:8080/generate-text", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Important: specify the data type you're sending
+          },
+          body: data2,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((text) => {
+            let response = JSON.parse(text);
+            let result = response.candidates[0].content.parts[0].text;
+            contentDiv.textContent = result;
+          })
+          .catch((error) => {
+            console.error("Fetch error:", error);
+            contentDiv.textContent = "Error loading file.";
+          });
+      });
+    </script>
+  </body>
+</html>
