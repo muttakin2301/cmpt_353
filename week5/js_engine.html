@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Execution Model</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      pre {
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      button {
+        margin: 10px 0;
+        padding: 8px 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Understanding JavaScript Execution</h1>
+
+    <h2>1. JavaScript Execution Process</h2>
+    <p>
+      JavaScript is a single-threaded language that executes code line by line.
+      However, it can handle asynchronous tasks using the event loop,
+      microtasks, and callback queues.
+    </p>
+    <p>Main components of the JavaScript execution process:</p>
+    <ul>
+      <li><strong>Program:</strong> The JavaScript code that we write.</li>
+      <li><strong>Call Stack:</strong> Keeps track of function execution.</li>
+      <li>
+        <strong>Node API:</strong> Provides additional capabilities in Node.js.
+      </li>
+      <li>
+        <strong>Microtasks Queue:</strong> Stores Promises and queueMicrotask
+        callbacks.
+      </li>
+      <li>
+        <strong>Callback Queue:</strong> Stores asynchronous tasks like
+        setTimeout.
+      </li>
+      <li>
+        <strong>Event Loop:</strong> Handles execution of synchronous and
+        asynchronous tasks.
+      </li>
+    </ul>
+
+    <h2>2. Call Stack</h2>
+    <p>
+      The call stack keeps track of function execution. It follows LIFO (Last
+      In, First Out).
+    </p>
+    <pre>
+function greet() {
+    console.log("Hello");
+}
+
+function sayGoodbye() {
+    console.log("Goodbye");
+}
+
+greet();
+sayGoodbye();
+    </pre>
+    <button onclick="runCallStackExample()">Run Call Stack Example</button>
+
+    <h2>3. Event Loop, Microtasks, and Callback Queue</h2>
+    <p>
+      The event loop continuously checks if the call stack is empty. If it is,
+      it picks tasks from:
+    </p>
+    <ul>
+      <li>
+        <strong>Microtasks Queue:</strong> Higher priority tasks (Promises,
+        queueMicrotask).
+      </li>
+      <li>
+        <strong>Callback Queue:</strong> Lower priority tasks (setTimeout,
+        setInterval).
+      </li>
+    </ul>
+    <pre>
+console.log('Start');
+setTimeout(() => console.log('Timeout'), 0);
+Promise.resolve().then(() => console.log('Promise'));
+queueMicrotask(() => console.log('queueMicrotask'));
+console.log('End');
+    </pre>
+    <button onclick="runEventLoopExample()">Run Event Loop Example</button>
+
+    <h2>4. setTimeout Timing</h2>
+    <p>
+      setTimeout moves tasks to the callback queue, and even with 0 ms delay, it
+      runs after microtasks.
+    </p>
+    <pre>
+console.log("1");
+setTimeout(() => { console.log("2"); }, 2000);
+setTimeout(() => { console.log("3"); }, 0);
+console.log("4");
+    </pre>
+    <button onclick="runSetTimeoutExample()">Run setTimeout Example</button>
+
+    <h2>5. Microtasks vs. Macrotasks</h2>
+    <p>
+      Microtasks (Promises, queueMicrotask) run before macrotasks (setTimeout,
+      setInterval).
+    </p>
+    <pre>
+setTimeout(() => console.log("Macrotask"), 0);
+Promise.resolve().then(() => console.log("Microtask"));
+console.log("Synchronous");
+    </pre>
+    <button onclick="runMicroVsMacroExample()">
+      Run Micro vs Macro Example
+    </button>
+
+    <h2>6. Function Execution and Stack Behavior</h2>
+    <p>
+      Functions are added to the call stack when invoked and removed when
+      execution completes.
+    </p>
+    <pre>
+function foo() {
+    console.log("hello");
+}
+foo();
+    </pre>
+    <button onclick="runFunctionExample()">Run Function Example</button>
+
+    <h2>8. Summary</h2>
+    <p>
+      JavaScript is single-threaded but can handle async tasks using the event
+      loop.
+    </p>
+    <ul>
+      <li>The call stack executes synchronous code first.</li>
+      <li>
+        Microtasks queue (Promises, queueMicrotask) executes before macrotasks.
+      </li>
+      <li>
+        Callback queue (setTimeout, setInterval) executes after microtasks.
+      </li>
+      <li>The event loop ensures the right execution order.</li>
+    </ul>
+
+    <script>
+      function runCallStackExample() {
+        function greet() {
+          console.log("Hello");
+        }
+        function sayGoodbye() {
+          console.log("Goodbye");
+        }
+        greet();
+        sayGoodbye();
+      }
+
+      function runEventLoopExample() {
+        console.log("Start");
+        setTimeout(() => console.log("Timeout"), 0);
+        Promise.resolve().then(() => console.log("Promise"));
+        queueMicrotask(() => console.log("queueMicrotask"));
+        console.log("End");
+      }
+
+      function runSetTimeoutExample() {
+        console.log("1");
+        setTimeout(() => {
+          console.log("2");
+        }, 2000);
+        setTimeout(() => {
+          console.log("3");
+        }, 0);
+        console.log("4");
+      }
+
+      function runMicroVsMacroExample() {
+        setTimeout(() => console.log("Macrotask"), 0);
+        Promise.resolve().then(() => console.log("Microtask"));
+        console.log("Synchronous");
+      }
+
+      function runFunctionExample() {
+        function foo() {
+          console.log("hello");
+        }
+        foo();
+      }
+    </script>
+  </body>
+</html>

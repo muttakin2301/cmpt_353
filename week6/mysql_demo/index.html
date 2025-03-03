@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Management</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2em;
+        background: #f9f9f9;
+      }
+      h1 {
+        color: #333;
+      }
+      form {
+        margin-bottom: 1em;
+        padding: 0.5em;
+        background: #eef;
+        display: inline-block;
+      }
+      input {
+        margin: 0.2em;
+        padding: 0.4em;
+      }
+      button {
+        padding: 0.4em 0.8em;
+      }
+      #user-list li {
+        margin: 0.5em 0;
+        background: #fff;
+        padding: 0.5em;
+        list-style: none;
+      }
+      #user-list li span {
+        margin-right: 1em;
+      }
+      #user-list li button {
+        margin-left: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>User Management</h1>
+
+    <form id="add-user-form">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <button type="submit">Add User</button>
+    </form>
+
+    <ul id="user-list"></ul>
+
+    <script>
+      function loadUsers() {
+        fetch("http://localhost:3000/users")
+          .then((response) => response.json())
+          .then((users) => {
+            const listElem = document.getElementById("user-list");
+            listElem.innerHTML = "";
+            users.forEach((user) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<span><strong>${user.name}</strong> (${user.email})</span>
+               <button onclick="editUser(${user.id}, '${user.name}', '${user.email}')">Edit</button>
+               <button onclick="deleteUser(${user.id})">Delete</button>`;
+              listElem.appendChild(li);
+            });
+          })
+          .catch((err) => console.error("Error loading users:", err));
+      }
+
+      document
+        .getElementById("add-user-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          fetch("http://localhost:3000/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, email: email }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("User added:", data);
+              this.reset();
+              loadUsers();
+            })
+            .catch((err) => console.error("Error adding user:", err));
+        });
+
+      function editUser(id, currentName, currentEmail) {
+        const newName = prompt("Edit name:", currentName);
+        const newEmail = prompt("Edit email:", currentEmail);
+        if (newName && newEmail) {
+          fetch(`http://localhost:3000/users/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: newName, email: newEmail }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("User updated:", data);
+              loadUsers();
+            })
+            .catch((err) => console.error("Error updating user:", err));
+        }
+      }
+
+      function deleteUser(id) {
+        if (!confirm("Are you sure you want to delete this user?")) {
+          return;
+        }
+        fetch(`http://localhost:3000/users/${id}`, { method: "DELETE" })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("User deleted:", data);
+            loadUsers();
+          })
+          .catch((err) => console.error("Error deleting user:", err));
+      }
+
+      loadUsers();
+    </script>
+  </body>
+</html>

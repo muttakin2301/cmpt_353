@@ -1,0 +1,17 @@
+{
+  "name": "couchdb-server",
+  "version": "1.0.0",
+  "description": "Node.js server with CouchDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "nano": "^9.0.3",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
