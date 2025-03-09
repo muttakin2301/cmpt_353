@@ -6,36 +6,23 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const MAX_RETRIES = 10;
-let retries = 0;
+const db = mysql.createConnection({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "rootpassword",
+  database: process.env.DB_NAME || "user_db",
+  port: 3306,
+});
 
-const connectWithRetry = () => {
-  const db = mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "rootpassword",
-    database: process.env.DB_NAME || "user_db",
-    port: 3306,
-  });
-
-  db.connect((err) => {
-    if (err) {
-      console.error("Database connection failed. Retrying in 5 seconds...");
-      retries++;
-      if (retries < MAX_RETRIES) {
-        setTimeout(connectWithRetry, 5000);
-      } else {
-        console.error("Max retries reached. Exiting.");
-        process.exit(1);
-      }
-    } else {
-      console.log("Connected to MySQL.");
-      createTable(db);
-    }
-  });
-
-  return db;
-};
+db.connect((err) => {
+  if (err) {
+    console.log("Database connection failed.", err);
+    process.exit(1);
+  } else {
+    console.log("Connected to MySQL.");
+    createTable(db);
+  }
+});
 
 const createTable = (db) => {
   db.query(
@@ -51,12 +38,12 @@ const createTable = (db) => {
   );
 };
 
-const db = connectWithRetry();
-
 // Get all users
 app.get("/users", (req, res) => {
+  console.log(db);
   db.query("SELECT * FROM users", (err, results) => {
     if (err) {
+      console.log(err, results);
       res.status(500).json({ error: err });
       return;
     }
